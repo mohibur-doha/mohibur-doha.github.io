@@ -1,87 +1,59 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f4f8;
-  color: #333;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Courier New', monospace;
 }
 
-/* HERO */
-header {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #2196f3, #00bcd4);
-  color: white;
-  text-align: center;
+/* TERMINAL HEADER */
+.terminal {
+  padding: 60px 20px;
+  border-bottom: 1px solid #1e293b;
 }
 
-.hero h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+.green {
+  color: #22c55e;
 }
 
-.btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: white;
-  color: #2196f3;
-  border-radius: 25px;
-  text-decoration: none;
-  transition: 0.3s;
+h1 {
+  font-size: 2.5rem;
+  margin: 10px 0;
+  color: #38bdf8;
 }
 
-.btn:hover {
-  background: #e3f2fd;
+/* TYPE EFFECT STYLE */
+.type {
+  color: #94a3b8;
 }
 
 /* SECTIONS */
 section {
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 0 20px;
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: auto;
 }
 
 h2 {
-  margin-bottom: 20px;
+  color: #22c55e;
+  margin-bottom: 15px;
 }
 
-/* PROJECT GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-/* COOL CARD STYLE */
+/* CARDS */
 .card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
+  border: 1px solid #1e293b;
   padding: 20px;
-  border-radius: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
   transition: 0.3s;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
 .card:hover {
-  transform: translateY(-10px) scale(1.02);
+  border-color: #38bdf8;
+  transform: translateY(-5px);
 }
 
-/* SKILLS */
-.tags span {
-  display: inline-block;
-  background: #2196f3;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  margin: 5px;
-  font-size: 0.9rem;
-}
-
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #777;
+/* LINKS */
+a {
+  color: #38bdf8;
+  text-decoration: none;
 }
