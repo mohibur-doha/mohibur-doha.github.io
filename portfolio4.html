@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name — Agricultural Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── THEME VARIABLES ── */
+[data-theme="light"]{
+  --bg:          #FAF7F2;
+  --bg-card:     #FFFFFF;
+  --bg-alt:      #F2EDE4;
+  --border:      #E2D9CC;
+  --border-mid:  #C8BFB2;
+  --text-h:      #2C2420;
+  --text-b:      #5C4E44;
+  --text-m:      #8C7B70;
+  --moss:        #4A6741;
+  --moss-l:      #7A9B71;
+  --moss-pale:   #E8F0E5;
+  --water:       #3A6B8A;
+  --water-l:     #6A9BB5;
+  --water-pale:  #E5EFF5;
+  --earth:       #8B6F47;
+  --earth-d:     #5C4433;
+  --accent:      #C4803A;
+  --nav-bg:      rgba(250,247,242,0.93);
+  --shadow:      0 2px 24px rgba(92,68,51,0.08);
+  --toggle-bg:   #C8BFB2;
+}
+[data-theme="dark"]{
+  --bg:          #141210;
+  --bg-card:     #1E1A17;
+  --bg-alt:      #252018;
+  --border:      #3A3028;
+  --border-mid:  #4E4238;
+  --text-h:      #F0EAE0;
+  --text-b:      #BFB3A8;
+  --text-m:      #887870;
+  --moss:        #7AB870;
+  --moss-l:      #5A9451;
+  --moss-pale:   #1A2818;
+  --water:       #6AABBF;
+  --water-l:     #4A8BA5;
+  --water-pale:  #0F1E28;
+  --earth:       #C4956A;
+  --earth-d:     #E8C8A0;
+  --accent:      #E09A50;
+  --nav-bg:      rgba(20,18,16,0.95);
+  --shadow:      0 2px 24px rgba(0,0,0,0.4);
+  --toggle-bg:   #4A6741;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text-b);
+  line-height:1.7;
+  font-size:15px;
+  transition:background .35s,color .35s;
+}
+
+/* ── SPLASH SCREEN ── */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2rem;
+  pointer-events:none;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+#splash.hide{opacity:0;visibility:hidden}
+
+/* Water drop scene */
+.water-scene{
+  position:relative;
+  width:120px;height:160px;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+
+/* The falling drop */
+.w-drop{
+  position:absolute;
+  top:0;left:50%;transform:translateX(-50%);
+  width:22px;height:30px;
+  animation:dropFall 1.6s cubic-bezier(.4,0,.6,1) infinite;
+}
+.w-drop svg{width:100%;height:100%}
+
+/* Surface ripples container */
+.w-surface{
+  position:relative;
+  width:100%;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Impact splash blobs */
+.w-splash{
+  position:absolute;bottom:0;left:50%;
+  width:0;height:0;transform:translateX(-50%);
+  animation:splashBlob 1.6s ease-out infinite;
+  overflow:visible;
+}
+.w-splash::before,.w-splash::after{
+  content:'';position:absolute;
+  border-radius:50%;
+  background:var(--water);opacity:0;
+}
+.w-splash::before{
+  width:6px;height:10px;
+  bottom:0;left:-14px;
+  animation:splashLeft 1.6s ease-out infinite;
+  transform-origin:bottom center;
+}
+.w-splash::after{
+  width:6px;height:10px;
+  bottom:0;right:-14px;
+  animation:splashRight 1.6s ease-out infinite;
+  transform-origin:bottom center;
+}
+
+/* Expanding ripple rings */
+.w-ripple{
+  position:absolute;
+  bottom:-4px;left:50%;transform:translateX(-50%);
+  border-radius:50%;
+  border:2px solid var(--water);
+  opacity:0;
+  width:0;height:0;
+}
+.w-ripple:nth-child(1){animation:rippleExpand 1.6s .55s ease-out infinite}
+.w-ripple:nth-child(2){animation:rippleExpand 1.6s .75s ease-out infinite}
+.w-ripple:nth-child(3){animation:rippleExpand 1.6s .95s ease-out infinite}
+
+
+.splash-text{
+  font-family:'Playfair Display',serif;
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-m);
+  animation:fadeUp .5s .2s ease both;
+}
+.splash-dots{
+  display:flex;gap:6px;
+  animation:fadeUp .5s .35s ease both;
+}
+.splash-dots span{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--water);opacity:.3;
+  animation:dotPulse 1.6s ease-in-out infinite;
+}
+.splash-dots span:nth-child(2){animation-delay:.2s}
+.splash-dots span:nth-child(3){animation-delay:.4s}
+
+/* Keyframes */
+@keyframes dropFall{
+  0%{top:-10px;opacity:0;transform:translateX(-50%) scaleY(1)}
+  15%{opacity:1}
+  45%{top:calc(100% - 44px);opacity:1;transform:translateX(-50%) scaleY(1.15)}
+  55%{top:calc(100% - 30px);opacity:0;transform:translateX(-50%) scaleY(.4)}
+  56%,100%{top:-10px;opacity:0;transform:translateX(-50%) scaleY(1)}
+}
+@keyframes rippleExpand{
+  0%{width:0;height:0;opacity:.7;transform:translateX(-50%)}
+  100%{width:90px;height:24px;opacity:0;transform:translateX(-50%)}
+}
+@keyframes splashLeft{
+  0%,50%{opacity:0;transform:translate(0,0) rotate(0deg)}
+  55%{opacity:.85}
+  75%{opacity:.5;transform:translate(-10px,-22px) rotate(-25deg)}
+  95%,100%{opacity:0;transform:translate(-14px,-2px) rotate(-40deg)}
+}
+@keyframes splashRight{
+  0%,50%{opacity:0;transform:translate(0,0) rotate(0deg)}
+  55%{opacity:.85}
+  75%{opacity:.5;transform:translate(10px,-22px) rotate(25deg)}
+  95%,100%{opacity:0;transform:translate(14px,-2px) rotate(40deg)}
+}
+@keyframes dotPulse{
+  0%,100%{opacity:.3;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.4)}
+}
+@keyframes fadeUp{
+  0%{transform:translateY(8px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+
+/* ── PAGE ENTRY ANIMATIONS ── */
+.reveal{
+  opacity:0;transform:translateY(22px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--nav-bg);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4vw;
+  transition:background .35s,border-color .35s;
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:17px;color:var(--earth-d);letter-spacing:.03em;
+  white-space:nowrap;
+}
+.nav-center{
+  display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;
+}
+.nav-center a{
+  font-size:12.5px;font-weight:400;color:var(--text-m);
+  text-decoration:none;letter-spacing:.04em;
+  position:relative;padding-bottom:3px;
+  transition:color .2s;
+}
+.nav-center a::after{
+  content:'';position:absolute;bottom:0;left:0;
+  width:0;height:1.5px;
+  background:var(--moss);border-radius:2px;
+  transition:width .25s cubic-bezier(.4,0,.2,1);
+}
+.nav-center a:hover{color:var(--moss)}
+.nav-center a:hover::after{width:100%}
+
+/* ── DARK MODE TOGGLE ── */
+.theme-toggle{
+  display:flex;align-items:center;gap:8px;
+  flex-shrink:0;
+}
+.toggle-label{font-size:11px;color:var(--text-m);letter-spacing:.05em;user-select:none}
+.toggle-wrap{
+  position:relative;width:44px;height:24px;
+  background:var(--toggle-bg);
+  border-radius:100px;
+  cursor:pointer;
+  transition:background .35s;
+  border:1.5px solid var(--border-mid);
+}
+.toggle-wrap::after{
+  content:'';
+  position:absolute;
+  top:3px;left:3px;
+  width:16px;height:16px;
+  background:#fff;
+  border-radius:50%;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+[data-theme="dark"] .toggle-wrap::after{
+  transform:translateX(19px);
+}
+.toggle-icon{font-size:12px;line-height:1}
+
+/* ── SECTIONS ── */
+section{
+  padding:5rem 4vw;
+  max-width:1100px;margin:0 auto;
+}
+.divider{
+  height:1px;background:var(--border);
+  max-width:1100px;margin:0 auto;
+}
+
+/* ── SECTION HEADER ── */
+.sh{margin-bottom:2.5rem}
+.sh-tag{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--moss);font-weight:500;
+  display:flex;align-items:center;gap:8px;margin-bottom:.5rem;
+}
+.sh-tag::before{content:'';display:block;width:16px;height:1px;background:var(--moss)}
+.sh-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3vw,2.1rem);
+  font-weight:500;color:var(--text-h);line-height:1.2;
+}
+.sh-line{width:36px;height:2px;background:var(--moss-l);margin-top:.7rem;border-radius:2px}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;max-width:100%;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;padding:0;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 60% at 75% 40%,rgba(74,103,65,.07) 0%,transparent 70%),
+    radial-gradient(ellipse 45% 55% at 25% 65%,rgba(58,107,138,.06) 0%,transparent 70%),
+    var(--bg);
+  transition:background .35s;
+}
+.hero-inner{
+  position:relative;
+  max-width:1100px;margin:0 auto;
+  padding:7rem 4vw 4rem;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:3rem;
+  width:100%;
+}
+
+/* ── HERO TEXT ── */
+.hero-text{width:100%;max-width:560px;text-align:left}
+.h-tag{justify-content:flex-start}
+.h-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--moss);font-weight:500;margin-bottom:1.4rem;
+}
+.h-tag::before{content:'';display:block;width:22px;height:1px;background:var(--moss)}
+.hero-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,5.5vw,4rem);
+  font-weight:500;color:var(--text-h);
+  line-height:1.15;margin-bottom:.9rem;
+}
+.hero-name em{color:var(--moss);font-style:normal}
+.hero-sub{
+  font-size:15px;font-weight:300;color:var(--text-b);
+  max-width:480px;margin:0 auto 1.5rem;line-height:1.85;
+}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:2rem;justify-content:flex-start}
+.pill{
+  padding:6px 15px;border-radius:100px;
+  font-size:11.5px;font-weight:400;letter-spacing:.03em;
+  transition:transform .2s,box-shadow .2s,filter .2s;
+  cursor:default;
+}
+.pill:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);filter:brightness(1.05)}
+.pm{background:var(--moss-pale);color:var(--moss);border:1px solid rgba(74,103,65,.22)}
+.pw{background:var(--water-pale);color:var(--water);border:1px solid rgba(58,107,138,.22)}
+.pe{background:#F2EAE0;color:var(--earth);border:1px solid rgba(139,111,71,.22)}
+[data-theme="dark"] .pe{background:#2A1E10;color:var(--earth);border-color:rgba(196,149,106,.22)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start}
+.btn-p{
+  padding:11px 26px;border-radius:100px;
+  background:var(--moss);color:#fff;
+  font-size:13px;font-weight:500;
+  text-decoration:none;border:none;cursor:pointer;
+  letter-spacing:.04em;
+  position:relative;overflow:hidden;
+  transition:background .25s,transform .18s,box-shadow .25s;
+  box-shadow:0 2px 0 rgba(44,76,37,.35);
+}
+.btn-p::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);
+  transform:translateX(-100%);
+  transition:transform .5s ease;
+}
+.btn-p:hover{background:var(--earth-d);transform:translateY(-2px);box-shadow:0 6px 16px rgba(44,76,37,.25)}
+.btn-p:hover::before{transform:translateX(100%)}
+.btn-p:active{transform:translateY(0);box-shadow:0 1px 0 rgba(44,76,37,.3)}
+.btn-s{
+  padding:11px 26px;border-radius:100px;
+  background:transparent;color:var(--text-m);
+  font-size:13px;font-weight:400;
+  text-decoration:none;
+  border:1.5px solid var(--border);cursor:pointer;
+  letter-spacing:.04em;
+  transition:border-color .25s,color .25s,background .25s,transform .18s;
+}
+.btn-s:hover{border-color:var(--moss);color:var(--moss);background:var(--moss-pale);transform:translateY(-2px)}
+.btn-s:active{transform:translateY(0)}
+
+/* ── HERO LEFT COL ── */
+.hero-left-col{
+  flex:1;
+  display:flex;flex-direction:column;
+  gap:0;
+  text-align:left;
+}
+
+/* Responsive: stack on small screens */
+@media(max-width:700px){
+  .hero-inner{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:2.5rem;
+    padding-top:5.5rem;
+  }
+  .hero-left-col{align-items:center;text-align:center}
+  .hero-text{text-align:center}
+  .h-tag{justify-content:center}
+  .pills{justify-content:center}
+  .cta{justify-content:center}
+  .hero-sub{margin:0 auto 1.5rem}
+}
+
+/* ── HERO IMAGE (abstract shape) ── */
+.hero-img-wrap{
+  width:360px;height:420px;
+  position:relative;flex-shrink:0;
+}
+.blob-bg{
+  position:absolute;inset:0;
+  animation:blobFloat 8s ease-in-out infinite;
+}
+@keyframes blobFloat{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  33%{transform:translateY(-8px) rotate(1.5deg)}
+  66%{transform:translateY(5px) rotate(-1deg)}
+}
+.blob-ring{
+  position:absolute;
+  border-radius:62% 38% 55% 45% / 48% 52% 48% 52%;
+  animation:blobMorph 10s ease-in-out infinite;
+}
+@keyframes blobMorph{
+  0%,100%{border-radius:62% 38% 55% 45% / 48% 52% 48% 52%}
+  25%{border-radius:48% 52% 42% 58% / 55% 45% 55% 45%}
+  50%{border-radius:58% 42% 62% 38% / 42% 58% 42% 58%}
+  75%{border-radius:45% 55% 48% 52% / 60% 40% 60% 40%}
+}
+.blob-outer{
+  inset:0;
+  background:linear-gradient(135deg,var(--moss-pale),var(--water-pale));
+  border:1.5px solid var(--border);
+  animation:blobMorph 10s ease-in-out infinite;
+  z-index:0;
+}
+.blob-mid{
+  inset:14px;
+  background:linear-gradient(135deg,rgba(74,103,65,.12),rgba(58,107,138,.1));
+  z-index:1;
+  animation:blobMorph 10s ease-in-out infinite reverse;
+}
+.photo-clip{
+  position:absolute;
+  inset:22px;
+  z-index:2;
+  border-radius:58% 42% 55% 45% / 50% 50% 50% 50%;
+  animation:blobMorph 12s ease-in-out infinite 1s;
+  overflow:hidden;
+  background:var(--bg-alt);
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--border);
+}
+.photo-clip img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;
+}
+.photo-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:var(--text-m);
+}
+.photo-placeholder svg{opacity:.5}
+.photo-placeholder span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+
+/* floating dots decoration */
+.dot{
+  position:absolute;border-radius:50%;
+  animation:dotFloat 6s ease-in-out infinite;
+}
+.d1{width:8px;height:8px;background:var(--moss);opacity:.3;top:10px;right:30px;animation-delay:0s}
+.d2{width:5px;height:5px;background:var(--water);opacity:.4;bottom:40px;left:10px;animation-delay:1.5s}
+.d3{width:10px;height:10px;background:var(--accent);opacity:.2;bottom:80px;right:-5px;animation-delay:3s}
+@keyframes dotFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.about-text{font-size:14.5px;color:var(--text-b);line-height:1.95}
+.about-text p+p{margin-top:.9rem}
+.about-text strong{color:var(--text-h);font-weight:500}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.scard{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:1.25rem;text-align:center;
+  transition:border-color .2s,transform .2s;
+}
+.scard:hover{border-color:var(--moss-l);transform:translateY(-2px)}
+.snum{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:500;color:var(--moss);
+}
+.slabel{font-size:11px;color:var(--text-m);letter-spacing:.05em;margin-top:3px}
+
+/* ── EDUCATION ── */
+.edu-list{display:flex;flex-direction:column;gap:1.25rem}
+.edu-item{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:1.5rem;
+  display:grid;grid-template-columns:auto 1fr;gap:1.25rem;align-items:start;
+  transition:border-color .2s;
+}
+.edu-item:hover{border-color:var(--moss-l)}
+.edu-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--moss);margin-top:5px;flex-shrink:0;
+}
+.edu-degree{font-size:14.5px;font-weight:500;color:var(--text-h);margin-bottom:3px}
+.edu-inst{font-size:13px;color:var(--water);margin-bottom:3px}
+.edu-year{font-size:12px;color:var(--text-m);letter-spacing:.04em}
+.edu-note{font-size:13px;color:var(--text-b);margin-top:.5rem;line-height:1.7}
+
+/* ── EXPERIENCE ── */
+.exp-list{display:flex;flex-direction:column;gap:0}
+.exp-item{
+  display:grid;grid-template-columns:auto 1fr;
+  gap:0 1.5rem;
+  padding-bottom:2rem;
+}
+.exp-item:last-child{padding-bottom:0}
+.exp-item:last-child .exp-line{display:none}
+.exp-left{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.exp-circle{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--moss);background:var(--bg);
+  flex-shrink:0;
+}
+.exp-line{width:2px;flex:1;background:var(--border);margin:6px 0 0}
+.exp-year{
+  font-size:11px;letter-spacing:.06em;
+  color:var(--moss);font-weight:500;
+  background:var(--moss-pale);
+  padding:2px 8px;border-radius:100px;
+  white-space:nowrap;margin-bottom:.4rem;
+}
+.exp-role{font-size:14.5px;font-weight:500;color:var(--text-h);margin-bottom:3px}
+.exp-org{font-size:13px;color:var(--water);margin-bottom:.5rem}
+.exp-desc{font-size:13.5px;color:var(--text-b);line-height:1.75}
+
+/* ── RESEARCH TOPICS ── */
+.research-box{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:2rem;
+}
+.research-intro{font-size:14px;color:var(--text-b);margin-bottom:1.5rem;line-height:1.85}
+.rtopics{display:flex;flex-wrap:wrap;gap:10px}
+.rt{
+  padding:8px 17px;border-radius:100px;
+  font-size:13px;border:1px solid;
+  transition:transform .15s;cursor:default;
+}
+.rt:hover{transform:translateY(-2px)}
+.rtm{background:var(--moss-pale);color:var(--moss);border-color:rgba(74,103,65,.25)}
+.rtw{background:var(--water-pale);color:var(--water);border-color:rgba(58,107,138,.25)}
+.rte{background:#F2EAE0;color:var(--earth);border-color:rgba(139,111,71,.25)}
+[data-theme="dark"] .rte{background:#2A1E10;color:var(--earth);border-color:rgba(196,149,106,.25)}
+
+/* ── SKILLS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:1.2rem}
+.sk-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:1.4rem;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,transform .2s;
+}
+.sk-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;
+}
+.sk-card.sm::before{background:var(--moss)}
+.sk-card.sw::before{background:var(--water)}
+.sk-card.se::before{background:var(--earth)}
+.sk-card:hover{border-color:var(--moss-l);transform:translateY(-3px)}
+.sk-icon{font-size:20px;margin-bottom:.7rem}
+.sk-title{font-size:13px;font-weight:500;color:var(--text-h);margin-bottom:.45rem}
+.sk-list{font-size:12px;color:var(--text-m);line-height:1.95}
+
+/* ── PROJECTS ── */
+.proj-list{display:flex;flex-direction:column;gap:1.4rem}
+.proj-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:1.7rem;
+  display:grid;grid-template-columns:52px 1fr;
+  gap:1.25rem;align-items:start;
+  transition:border-color .2s;cursor:default;
+}
+.proj-card:hover{border-color:var(--moss-l)}
+.pnum{
+  font-family:'Playfair Display',serif;
+  font-size:2.3rem;font-weight:400;
+  color:var(--border);line-height:1;
+}
+.ptitle{font-size:14.5px;font-weight:500;color:var(--text-h);margin-bottom:.35rem}
+.pdesc{font-size:13px;color:var(--text-b);line-height:1.75;margin-bottom:.7rem}
+.ptags{display:flex;flex-wrap:wrap;gap:6px}
+.ptag{
+  font-size:11px;padding:4px 11px;border-radius:100px;
+  background:var(--moss-pale);color:var(--moss);
+  border:1px solid rgba(74,103,65,.18);
+  transition:background .2s,transform .18s;cursor:default;
+}
+.ptag:hover{background:var(--moss);color:#fff;transform:translateY(-1px)}
+
+/* ── PUBLICATIONS ── */
+.pub-list{display:flex;flex-direction:column;gap:1.1rem}
+.pub-item{
+  padding:1.2rem 1.5rem;
+  border-left:3px solid var(--moss-l);
+  background:var(--bg-card);
+  border-radius:0 10px 10px 0;
+  border-right:1px solid var(--border);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  transition:border-left-color .2s;
+}
+.pub-item:hover{border-left-color:var(--water)}
+.pub-title{font-size:14px;font-weight:500;color:var(--text-h);margin-bottom:.3rem}
+.pub-meta{font-size:12px;color:var(--text-m)}
+.pub-meta span{color:var(--water)}
+
+/* ── AWARDS ── */
+.aw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.aw-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:1.25rem;
+  transition:border-color .2s,transform .2s;
+}
+.aw-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.aw-year{font-size:11px;color:var(--moss);letter-spacing:.08em;font-weight:500;margin-bottom:.35rem}
+.aw-title{font-size:13px;font-weight:500;color:var(--text-h);margin-bottom:.2rem}
+.aw-org{font-size:12px;color:var(--text-m)}
+
+/* ── CERTIFICATES ── */
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.cert-card{
+  background:var(--water-pale);
+  border:1px solid rgba(58,107,138,.18);
+  border-radius:12px;padding:1.25rem;
+  display:flex;gap:1rem;align-items:flex-start;
+  transition:transform .2s;
+}
+.cert-card:hover{transform:translateY(-2px)}
+.cert-ico{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--water);display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.cert-name{font-size:13px;font-weight:500;color:var(--text-h)}
+.cert-iss{font-size:12px;color:var(--text-m);margin-top:2px}
+
+/* ── BLOG ── */
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.2rem}
+.blog-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  transition:transform .2s,border-color .2s;cursor:pointer;
+}
+.blog-card:hover{transform:translateY(-3px);border-color:var(--moss-l)}
+.bthumb{
+  height:105px;display:flex;align-items:center;justify-content:center;font-size:32px;
+}
+.ba{background:var(--moss-pale)}
+.bb{background:var(--water-pale)}
+.bc{background:#F2EAE0}
+[data-theme="dark"] .bc{background:#2A1E10}
+.bbody{padding:.9rem 1.2rem 1.2rem}
+.bdate{font-size:11px;color:var(--text-m);letter-spacing:.05em;margin-bottom:.35rem}
+.btitle{font-size:13px;font-weight:500;color:var(--text-h);line-height:1.5}
+
+/* ── CONTACT ── */
+.contact-wrap{
+  background:var(--earth-d);
+  border-radius:20px;padding:3rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;
+}
+[data-theme="dark"] .contact-wrap{background:#0E0C0A;border:1px solid var(--border)}
+.c-left .sh-tag{color:rgba(255,255,255,.45)}
+.c-left .sh-tag::before{background:rgba(255,255,255,.3)}
+.c-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.9rem;font-weight:500;color:#fff;line-height:1.25;margin-bottom:.9rem;
+}
+.c-sub{font-size:13.5px;color:rgba(255,255,255,.55);line-height:1.85}
+.c-links{display:flex;flex-direction:column;gap:11px}
+.c-link{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 15px;border-radius:10px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  text-decoration:none;color:#fff;font-size:13px;
+  transition:background .2s;
+}
+.c-link:hover{background:rgba(255,255,255,.13)}
+.c-link-ico{font-size:15px}
+.c-link-label{font-size:11px;color:rgba(255,255,255,.45);display:block}
+.c-link-val{font-size:13px;color:#fff}
+
+/* ── FOOTER ── */
+footer{
+  max-width:1100px;margin:0 auto;
+  padding:1.75rem 4vw;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--text-m);
+}
+footer a{color:var(--text-m);text-decoration:none}
+footer a:hover{color:var(--moss)}
+
+@media(max-width:680px){
+  .hero-img-wrap{width:220px;height:270px;margin:1.5rem auto}
+  .about-grid,.contact-wrap{grid-template-columns:1fr}
+  .nav-center{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="water-scene">
+    <!-- Falling drop -->
+    <div class="w-drop">
+      <svg viewBox="0 0 22 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 1 C11 1 2 12 2 18.5 C2 23.75 6.03 28 11 28 C15.97 28 20 23.75 20 18.5 C20 12 11 1 11 1Z"
+              fill="var(--water)" opacity="0.85"/>
+        <path d="M7 19 C7 19 8.5 16.5 11 16.5 C13.5 16.5 15 19 15 19"
+              stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <!-- Ripple rings on surface -->
+    <div class="w-surface">
+<div class="w-ripple"></div>
+      <div class="w-ripple"></div>
+      <div class="w-ripple"></div>
+      <div class="w-splash"></div>
+    </div>
+  </div>
+  <div class="splash-text">Loading portfolio</div>
+  <div class="splash-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <div class="nav-logo">Your Name</div>
+  <div class="nav-center">
+    <a href="#about">About</a>
+    <a href="#education">Education</a>
+    <a href="#experience">Experience</a>
+    <a href="#research">Research</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#publications">Publications</a>
+    <a href="#awards">Awards</a>
+    <a href="#certificates">Certs</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="theme-toggle">
+    <span class="toggle-icon">☀️</span>
+    <div class="toggle-wrap" id="themeToggle" role="switch" aria-checked="false" tabindex="0" title="Toggle dark mode"></div>
+    <span class="toggle-icon">🌙</span>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+
+    <!-- LEFT: text content -->
+    <div class="hero-left-col">
+      <!-- tag + name + subtitle -->
+      <div class="hero-text reveal" style="transition-delay:.15s">
+        <div class="h-tag">Agricultural Engineer · Water Resources Specialist</div>
+        <h1 class="hero-name">Your Name<br><em>Goes Here</em></h1>
+        <p class="hero-sub">Bridging hydrology, remote sensing, and climate data analysis to build sustainable water futures.</p>
+      </div>
+      <div class="reveal" style="display:flex;flex-direction:column;align-items:flex-start;gap:1.5rem;transition-delay:.3s">
+        <div class="pills">
+          <span class="pill pm">Water Resource Engineering</span>
+          <span class="pill pw">Remote Sensing & GIS</span>
+          <span class="pill pe">Irrigation Management</span>
+          <span class="pill pm">Climate Data Analysis</span>
+        </div>
+        <div class="cta">
+          <a href="#projects" class="btn-p">View My Work</a>
+          <a href="#contact" class="btn-s">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: abstract blob image -->
+    <div class="hero-img-wrap reveal" style="transition-delay:.05s;flex-shrink:0;">
+      <div class="blob-bg">
+        <div class="blob-ring blob-outer"></div>
+        <div class="blob-ring blob-mid"></div>
+      </div>
+      <div class="photo-clip">
+        <!--
+          To use your own photo:
+          1. Save your photo as  assets/photo.jpg  (or any path)
+          2. Replace the placeholder below with:
+             <img src="assets/photo.jpg" alt="Your Name">
+        -->
+        <div class="photo-placeholder">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="24" r="12" stroke="#4A6741" stroke-width="2"/>
+            <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#4A6741" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Your Photo</span>
+        </div>
+      </div>
+      <div class="dot d1"></div>
+      <div class="dot d2"></div>
+      <div class="dot d3"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="sh">
+    <div class="sh-tag">Who I Am</div>
+    <h2 class="sh-title">About Me</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I am an <strong>Agricultural Engineer</strong> specializing in <strong>Water Resource Engineering and Irrigation Water Management</strong>, with a deep passion for applying geospatial technologies to solve real-world water challenges.</p>
+      <p>My work sits at the intersection of hydrology, remote sensing, and climate science — using <strong>GIS and satellite data</strong> to analyze irrigation systems, model climate impacts, and improve water use efficiency in agriculture.</p>
+      <p>I am driven by the belief that data-informed decisions are key to building resilient, water-secure communities in a changing climate.</p>
+    </div>
+    <div class="stats">
+      <div class="scard"><div class="snum">5+</div><div class="slabel">Years of Research</div></div>
+      <div class="scard"><div class="snum">12+</div><div class="slabel">Projects Completed</div></div>
+      <div class="scard"><div class="snum">8+</div><div class="slabel">Publications</div></div>
+      <div class="scard"><div class="snum">3+</div><div class="slabel">Countries Studied</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── EDUCATION ── -->
+<section id="education">
+  <div class="sh">
+    <div class="sh-tag">Academic Background</div>
+    <h2 class="sh-title">Education</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="edu-list">
+    <div class="edu-item">
+      <div class="edu-dot"></div>
+      <div>
+        <div class="edu-degree">M.Sc. in Water Resource Engineering & Management</div>
+        <div class="edu-inst">University / Institute Name</div>
+        <div class="edu-year">2021 – 2023</div>
+        <div class="edu-note">Thesis: Irrigation water demand modelling under climate change scenarios using SWAT and CMIP6 projections.</div>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-dot"></div>
+      <div>
+        <div class="edu-degree">B.Sc. in Agricultural Engineering</div>
+        <div class="edu-inst">University / Institute Name</div>
+        <div class="edu-year">2016 – 2021</div>
+        <div class="edu-note">Specialization in Irrigation & Drainage Engineering. CGPA: X.XX / 4.00.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── EXPERIENCE ── -->
+<section id="experience">
+  <div class="sh">
+    <div class="sh-tag">Career Path</div>
+    <h2 class="sh-title">Experience</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="exp-list">
+    <div class="exp-item">
+      <div class="exp-left">
+        <div class="exp-circle"></div>
+        <div class="exp-line"></div>
+      </div>
+      <div>
+        <div class="exp-year">2023 – Present</div>
+        <div class="exp-role">Research Assistant / Junior Researcher</div>
+        <div class="exp-org">Institute / Organization Name</div>
+        <div class="exp-desc">Conducting research on remote sensing-based crop water stress mapping and irrigation efficiency assessment under changing climate conditions.</div>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-left">
+        <div class="exp-circle"></div>
+        <div class="exp-line"></div>
+      </div>
+      <div>
+        <div class="exp-year">2022 – 2023</div>
+        <div class="exp-role">Graduate Research Fellow</div>
+        <div class="exp-org">Department of Water Resources, University Name</div>
+        <div class="exp-desc">Developed GIS-based watershed delineation workflows and performed rainfall-runoff modelling using HEC-HMS for ungauged basins.</div>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-left">
+        <div class="exp-circle"></div>
+        <div class="exp-line"></div>
+      </div>
+      <div>
+        <div class="exp-year">2021</div>
+        <div class="exp-role">Internship — Irrigation Engineer</div>
+        <div class="exp-org">Government / NGO / Company Name</div>
+        <div class="exp-desc">Assisted in field surveys, irrigation system design, and water distribution network mapping for smallholder agricultural zones.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── RESEARCH TOPICS ── -->
+<section id="research">
+  <div class="sh">
+    <div class="sh-tag">Current Focus</div>
+    <h2 class="sh-title">Research Topics</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="research-box">
+    <div class="research-intro">My research investigates how satellite-derived data and machine learning can transform our understanding of water availability and agricultural water demand under climate uncertainty.</div>
+    <div class="rtopics">
+      <span class="rt rtm">Deficit Irrigation Strategies</span>
+      <span class="rt rtw">Drought Early Warning Systems</span>
+      <span class="rt rte">Soil Moisture Remote Sensing</span>
+      <span class="rt rtm">Climate–Water–Food Nexus</span>
+      <span class="rt rtw">Land Surface Temperature Dynamics</span>
+      <span class="rt rte">ML-based Streamflow Prediction</span>
+      <span class="rt rtm">Sustainable Groundwater Use</span>
+      <span class="rt rtw">Flood Risk Mapping via GIS</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="sh">
+    <div class="sh-tag">What I Do</div>
+    <h2 class="sh-title">Skills & Expertise</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="sk-card sm">
+      <div class="sk-icon">💧</div>
+      <div class="sk-title">Water Resource Engineering</div>
+      <div class="sk-list">Irrigation design · Watershed management · Hydrology modelling · Water balance analysis</div>
+    </div>
+    <div class="sk-card sw">
+      <div class="sk-icon">🛰️</div>
+      <div class="sk-title">Remote Sensing & GIS</div>
+      <div class="sk-list">Satellite image analysis · QGIS / ArcGIS · Land use mapping · Spatial data processing</div>
+    </div>
+    <div class="sk-card se">
+      <div class="sk-icon">☁️</div>
+      <div class="sk-title">Climate Data Analysis</div>
+      <div class="sk-list">Climate trend analysis · Drought monitoring · Statistical modelling · Python / R</div>
+    </div>
+    <div class="sk-card sm">
+      <div class="sk-icon">🌾</div>
+      <div class="sk-title">Irrigation Management</div>
+      <div class="sk-list">Crop water requirements · Irrigation scheduling · Efficiency assessment · FAO guidelines</div>
+    </div>
+    <div class="sk-card sw">
+      <div class="sk-icon">🗄️</div>
+      <div class="sk-title">Data & Tools</div>
+      <div class="sk-list">Python · R · Google Earth Engine · SWAT · NetCDF / HDF5 · Excel</div>
+    </div>
+    <div class="sk-card se">
+      <div class="sk-icon">📝</div>
+      <div class="sk-title">Research & Writing</div>
+      <div class="sk-list">Scientific writing · Proposal development · Data visualization · Academic publishing</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PROJECTS ── -->
+<section id="projects">
+  <div class="sh">
+    <div class="sh-tag">My Work</div>
+    <h2 class="sh-title">Projects & Research</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="proj-list">
+    <div class="proj-card">
+      <div class="pnum">01</div>
+      <div>
+        <div class="ptitle">Irrigation Water Demand Modelling Under Climate Change Scenarios</div>
+        <div class="pdesc">Assessed future irrigation demand using SWAT model coupled with CMIP6 climate projections, revealing a 23% increase in water stress by 2050.</div>
+        <div class="ptags"><span class="ptag">SWAT</span><span class="ptag">CMIP6</span><span class="ptag">Python</span><span class="ptag">Water Stress</span></div>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="pnum">02</div>
+      <div>
+        <div class="ptitle">Remote Sensing-Based Crop Water Stress Mapping</div>
+        <div class="pdesc">Workflow using Landsat-8 and Sentinel-2 imagery to map crop evapotranspiration and detect water stress using SEBAL algorithm.</div>
+        <div class="ptags"><span class="ptag">Landsat-8</span><span class="ptag">SEBAL</span><span class="ptag">GEE</span><span class="ptag">ET</span></div>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="pnum">03</div>
+      <div>
+        <div class="ptitle">Spatio-temporal Analysis of Rainfall Variability in South Asia</div>
+        <div class="pdesc">Used Mann–Kendall trend tests and wavelet analysis on 50-year precipitation records to quantify spatial variability in monsoon rainfall patterns.</div>
+        <div class="ptags"><span class="ptag">R</span><span class="ptag">Mann-Kendall</span><span class="ptag">Climate</span><span class="ptag">GIS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PUBLICATIONS ── -->
+<section id="publications">
+  <div class="sh">
+    <div class="sh-tag">Research Output</div>
+    <h2 class="sh-title">Publications</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="pub-list">
+    <div class="pub-item">
+      <div class="pub-title">Assessing irrigation efficiency under changing climate: a remote sensing approach</div>
+      <div class="pub-meta">Journal of Hydrology · <span>2024</span> · First Author</div>
+    </div>
+    <div class="pub-item">
+      <div class="pub-title">Mapping groundwater potential zones using GIS and multi-criteria decision analysis</div>
+      <div class="pub-meta">Agricultural Water Management · <span>2023</span> · Co-Author</div>
+    </div>
+    <div class="pub-item">
+      <div class="pub-title">Evapotranspiration estimation from Sentinel-2 imagery in smallholder irrigated agriculture</div>
+      <div class="pub-meta">Remote Sensing of Environment · <span>2022</span> · First Author</div>
+    </div>
+    <div class="pub-item">
+      <div class="pub-title">Trend analysis of temperature and rainfall: implications for water resource planning</div>
+      <div class="pub-meta">Climate Research · <span>2021</span> · Co-Author</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── AWARDS ── -->
+<section id="awards">
+  <div class="sh">
+    <div class="sh-tag">Recognition</div>
+    <h2 class="sh-title">Awards & Honours</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="aw-grid">
+    <div class="aw-card"><div class="aw-year">2024</div><div class="aw-title">Best Research Paper Award</div><div class="aw-org">International Conference on Water Resources</div></div>
+    <div class="aw-card"><div class="aw-year">2023</div><div class="aw-title">Graduate Research Excellence Fellowship</div><div class="aw-org">University / Institute Name</div></div>
+    <div class="aw-card"><div class="aw-year">2022</div><div class="aw-title">Young Scientist Award</div><div class="aw-org">National Academy of Agricultural Sciences</div></div>
+    <div class="aw-card"><div class="aw-year">2021</div><div class="aw-title">Merit Scholarship</div><div class="aw-org">Faculty of Agricultural Engineering</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CERTIFICATES ── -->
+<section id="certificates">
+  <div class="sh">
+    <div class="sh-tag">Credentials</div>
+    <h2 class="sh-title">Certifications</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="cert-grid">
+    <div class="cert-card"><div class="cert-ico">🌍</div><div><div class="cert-name">Google Earth Engine for Remote Sensing</div><div class="cert-iss">Google / Coursera · 2023</div></div></div>
+    <div class="cert-card"><div class="cert-ico">📊</div><div><div class="cert-name">Climate Data Analysis with Python</div><div class="cert-iss">edX / UCAR · 2022</div></div></div>
+    <div class="cert-card"><div class="cert-ico">🗺️</div><div><div class="cert-name">Advanced GIS & Spatial Analysis</div><div class="cert-iss">Esri Training · 2022</div></div></div>
+    <div class="cert-card"><div class="cert-ico">💧</div><div><div class="cert-name">Irrigation System Design (FAO Guidelines)</div><div class="cert-iss">FAO e-Learning Academy · 2021</div></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── BLOG ── -->
+<section id="blog">
+  <div class="sh">
+    <div class="sh-tag">Thoughts & Writing</div>
+    <h2 class="sh-title">Blog</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="bthumb ba">🌿</div>
+      <div class="bbody"><div class="bdate">March 2025</div><div class="btitle">How satellite data is transforming smallholder irrigation in Bangladesh</div></div>
+    </div>
+    <div class="blog-card">
+      <div class="bthumb bb">🌊</div>
+      <div class="bbody"><div class="bdate">January 2025</div><div class="btitle">Understanding the water–food–energy nexus through a GIS lens</div></div>
+    </div>
+    <div class="blog-card">
+      <div class="bthumb bc">🌡️</div>
+      <div class="bbody"><div class="bdate">November 2024</div><div class="btitle">Climate change and drought: what the data really tells us</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTACT ── -->
+<section id="contact" style="padding-bottom:3rem">
+  <div class="contact-wrap">
+    <div class="c-left">
+      <div class="sh-tag">Let's Connect</div>
+      <div class="c-title">Open to Collaboration & Opportunities</div>
+      <p class="c-sub">Whether it's a research partnership, consulting, or just a conversation about water science — I'd love to hear from you.</p>
+    </div>
+    <div class="c-links">
+      <a href="mailto:your@email.com" class="c-link"><span class="c-link-ico">✉️</span><div><span class="c-link-label">Email</span><span class="c-link-val">your@email.com</span></div></a>
+      <a href="#" class="c-link"><span class="c-link-ico">🔗</span><div><span class="c-link-label">LinkedIn</span><span class="c-link-val">linkedin.com/in/yourname</span></div></a>
+      <a href="#" class="c-link"><span class="c-link-ico">🎓</span><div><span class="c-link-label">Google Scholar</span><span class="c-link-val">scholar.google.com/yourprofile</span></div></a>
+      <a href="#" class="c-link"><span class="c-link-ico">🐙</span><div><span class="c-link-label">GitHub</span><span class="c-link-val">github.com/yourhandle</span></div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Your Name. Agricultural Engineer.</span>
+  <a href="#hero">Back to top ↑</a>
+</footer>
+
+<script>
+// ── THEME TOGGLE ──
+const toggle = document.getElementById('themeToggle');
+const html = document.documentElement;
+const saved = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', saved);
+toggle.setAttribute('aria-checked', saved === 'dark');
+toggle.addEventListener('click', () => {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  toggle.setAttribute('aria-checked', String(!isDark));
+  localStorage.setItem('theme', next);
+});
+toggle.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+});
+
+// ── SPLASH SCREEN ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    splash.classList.add('hide');
+    // trigger hero reveals after splash fades
+    setTimeout(() => {
+      document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('in'));
+    }, 300);
+  }, 1900);
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+// Observe section children (not hero — those are triggered after splash)
+document.querySelectorAll('section .sh, section .about-grid, section .edu-list, section .exp-list, section .research-box, section .skills-grid, section .proj-list, section .pub-list, section .aw-grid, section .cert-grid, section .blog-grid, section .contact-wrap, footer').forEach(el => {
+  el.classList.add('reveal');
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
