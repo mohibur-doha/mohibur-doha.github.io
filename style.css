@@ -1,59 +1,128 @@
-body {
+* {
   margin: 0;
-  background: black !important;
-  color: #e2e8f0;
-  font-family: 'Courier New', monospace;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-/* TERMINAL HEADER */
-.terminal {
-  padding: 60px 20px;
-  border-bottom: 1px solid #1e293b;
+body {
+  line-height: 1.6;
 }
 
-.green {
-  color: #22c55e;
+/* Navbar */
+header {
+  background: #111;
+  color: #fff;
+  padding: 15px 20px;
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin: 10px 0;
-  color: #38bdf8;
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* TYPE EFFECT STYLE */
-.type {
-  color: #94a3b8;
+.nav-links {
+  list-style: none;
+  display: flex;
 }
 
-/* SECTIONS */
+.nav-links li {
+  margin-left: 20px;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.menu-toggle {
+  display: none;
+  cursor: pointer;
+}
+
+/* Hero */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: white;
+  text-align: center;
+}
+
+.hero span {
+  color: yellow;
+}
+
+.btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Sections */
 section {
-  padding: 40px 20px;
-  max-width: 800px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+/* Projects */
+.project-card {
+  background: #f4f4f4;
+  margin: 15px auto;
+  padding: 20px;
+  max-width: 400px;
+  border-radius: 10px;
+}
+
+/* Contact */
+form {
+  max-width: 400px;
   margin: auto;
 }
 
-h2 {
-  color: #22c55e;
-  margin-bottom: 15px;
+input, textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
 }
 
-/* CARDS */
-.card {
-  border: 1px solid #1e293b;
-  padding: 20px;
-  margin-top: 15px;
-  border-radius: 10px;
-  transition: 0.3s;
+button {
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
-.card:hover {
-  border-color: #38bdf8;
-  transform: translateY(-5px);
+/* Footer */
+footer {
+  background: #111;
+  color: white;
+  padding: 15px;
 }
 
-/* LINKS */
-a {
-  color: #38bdf8;
-  text-decoration: none;
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background: #111;
+    position: absolute;
+    right: 20px;
+    top: 60px;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
 }
